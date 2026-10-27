@@ -1,0 +1,125 @@
+
+name: Portail - Anonymize Users
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environnement cible'
+        required: true
+        default: 'qual'
+        type: choice
+        options:
+          - qual
+
+
+env:
+  PATH_TO_CSPROJ: TestPlayrights.csproj
+  REPORTS_PATH: REPORTS
+  DOTNET_VERSION: '8.0.x'
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      WORKFLOW_NAME: "ANONYMIZE_USERS_${{ inputs.environment }}"
+      TEST_ENVIRONMENT: ${{ inputs.environment }}
+      # Test admin Keycloak : chromium / desktop / FR uniquement (combinaison unique)
+      RUN_BROWSER_CHROME: 'true'
+      RUN_BROWSER_FIREFOX: 'false'
+      RUN_BROWSER_SAFARI: 'false'
+      RUN_MOBILE: 'false'
+      LNG_FR: 'true'
+      LNG_DE: 'false'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # Cache NuGet packages
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      # Cache Playwright browsers
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-chromium-
+
+      - name: Clear Playwright env overrides
+        run: |
+          echo "PLAYWRIGHT_BROWSERS_PATH=" >> $GITHUB_ENV
+          echo "PWDEBUG=" >> $GITHUB_ENV
+
+      - name: Restore
+        run: dotnet restore "$PATH_TO_CSPROJ"
+
+      - name: Build
+        run: dotnet build "$PATH_TO_CSPROJ" -c Release --no-restore -clp:ErrorsOnly
+
+      - name: Install Playwright Chromium
+        shell: pwsh
+        run: |
+          $rel = "./bin/Release/net8.0/playwright.ps1"
+          $dbg = "./bin/Debug/net8.0/playwright.ps1"
+          if (Test-Path $rel) { $script = $rel }
+          elseif (Test-Path $dbg) { $script = $dbg }
+          else {
+            Write-Host "playwright.ps1 introuvable. Listing des sorties :"
+            Get-ChildItem -Path ./bin -Recurse -Filter "playwright.*" | Format-List FullName
+            throw "Script playwright.ps1 non trouvé en Release ni Debug."
+          }
+          & $script install chromium --with-deps
+
+      - name: Run tests
+        env:
+          KEYCLOAK_EMAIL: ${{ secrets.KEYCLOAK_EMAIL }}
+          KEYCLOAK_PASSWORD: ${{ secrets.KEYCLOAK_PASSWORD }}
+          PORTAL_PASSWORD: ${{ secrets.PORTAL_PASSWORD }}
+        run: |
+          dotnet test "$PATH_TO_CSPROJ" -c Release --no-build \
+            --filter "FullyQualifiedName~Portail_Tools.AnonymizeUsers" \
+            --logger "trx;LogFileName=test-results.trx" \
+            --logger "console;verbosity=detailed" \
+            --results-directory TestResults
+
+      - name: List generated reports (diagnostic)
+        if: always()
+        run: |
+          echo "=== PDF files ==="
+          find ./bin -type f -name "*.pdf" -print | head -50
+          echo "=== REPORTS structure ==="
+          [ -d "./bin/Release/net8.0/REPORTS" ] && ls -laR ./bin/Release/net8.0/REPORTS/ || echo "no REPORTS folder"
+
+      - name: Upload PDF reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: anonymize-users-reports-${{ inputs.environment }}
+          path: |
+            bin/Release/net8.0/REPORTS/**/*.pdf
+            bin/Release/net8.0/REPORTS/**/*.html
+          retention-days: 14
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: anonymize-users-test-results
+          path: TestResults/*.trx
+          retention-days: 7

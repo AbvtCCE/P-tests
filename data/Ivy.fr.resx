@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccountHolder" xml:space="preserve">
+    <value>Titulaire du compte*</value>
+  </data>
+  <data name="AccountOverview" xml:space="preserve">
+    <value>Aperçu du compte</value>
+  </data>
+  <data name="AdminBillToParty" xml:space="preserve">
+    <value>Gérer le destinataire de facture</value>
+  </data>
+  <data name="AdminCorrespReci" xml:space="preserve">
+    <value>Gérer le destinataire de correspondance</value>
+  </data>
+  <data name="AdminPayee" xml:space="preserve">
+    <value>Gérer le bénéficiaire</value>
+  </data>
+  <data name="AdminPayer" xml:space="preserve">
+    <value>Gestion des payeurs</value>
+  </data>
+  <data name="AdvancedHistory" xml:space="preserve">
+    <value>Historique avancée</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Appliquer</value>
+  </data>
+  <data name="CSPortail" xml:space="preserve">
+    <value>Espace client</value>
+  </data>
+  <data name="ChangePartenaire" xml:space="preserve">
+    <value>Changer de partenaire</value>
+  </data>
+  <data name="ChoosePartenaire" xml:space="preserve">
+    <value> Choisir un partenaire</value>
+  </data>
+  <data name="Complete" xml:space="preserve">
+    <value>Completer</value>
+  </data>
+  <data name="CopyBill" xml:space="preserve">
+    <value>Création double/copie de facture</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Créer</value>
+  </data>
+  <data name="CreateAnyway" xml:space="preserve">
+    <value>Créer toutefois</value>
+  </data>
+  <data name="CustomerPortal" xml:space="preserve">
+    <value>Espace client</value>
+  </data>
+  <data name="Docs" xml:space="preserve">
+    <value>Documents</value>
+  </data>
+  <data name="DontSend" xml:space="preserve">
+    <value>Ne pas envoyer</value>
+  </data>
+  <data name="EditBankAccount" xml:space="preserve">
+    <value>Mutation du compte bancaire</value>
+  </data>
+  <data name="EmailIndivi" xml:space="preserve">
+    <value>E-Mail Individuels</value>
+  </data>
+  <data name="EmmDem" xml:space="preserve">
+    <value>Emm. / Dém. (6)</value>
+  </data>
+  <data name="End" xml:space="preserve">
+    <value>Terminer</value>
+  </data>
+  <data name="FinishInteraction" xml:space="preserve">
+    <value>Terminer l'interaction</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>Historique</value>
+  </data>
+  <data name="IndividualItems" xml:space="preserve">
+    <value>Postes individuels</value>
+  </data>
+  <data name="InvoiceOverview" xml:space="preserve">
+    <value>Aperçu des factures</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Langue</value>
+  </data>
+  <data name="LectureCompteur" xml:space="preserve">
+    <value>Lecture relevé des compteurs</value>
+  </data>
+  <data name="MangeBankingDetails" xml:space="preserve">
+    <value>Gérer les coordonnées bancaires</value>
+  </data>
+  <data name="MasterDataMutation" xml:space="preserve">
+    <value>Mutations données clients (1)</value>
+  </data>
+  <data name="MutationEnergieProduct" xml:space="preserve">
+    <value>Mutation des produits</value>
+  </data>
+  <data name="MutationTarif" xml:space="preserve">
+    <value>Mutation des tarifs</value>
+  </data>
+  <data name="NewService" xml:space="preserve">
+    <value>Nouveau service</value>
+  </data>
+  <data name="Nom" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="Npart" xml:space="preserve">
+    <value>No-p</value>
+  </data>
+  <data name="NumIban" xml:space="preserve">
+    <value>Numéro IBAN*</value>
+  </data>
+  <data name="Object Overview" xml:space="preserve">
+    <value>aperçu des objets</value>
+  </data>
+  <data name="PaymentAgreements" xml:space="preserve">
+    <value>Arrangements de paiement</value>
+  </data>
+  <data name="Person" xml:space="preserve">
+    <value>Personne</value>
+  </data>
+  <data name="Prenom" xml:space="preserve">
+    <value>Prénom</value>
+  </data>
+  <data name="ProductCptTarif" xml:space="preserve">
+    <value>Produit / Compteurs / Tarif (3)</value>
+  </data>
+  <data name="Recipients" xml:space="preserve">
+    <value>Destinataires (4)</value>
+  </data>
+  <data name="Resume" xml:space="preserve">
+    <value>Résumé</value>
+  </data>
+  <data name="SapNumber" xml:space="preserve">
+    <value>Nr. SAP</value>
+  </data>
+  <data name="SelectionPerson" xml:space="preserve">
+    <value>Sélectionnez une personne</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Envoyer</value>
+  </data>
+  <data name="SendConfirm" xml:space="preserve">
+    <value>Envoyer la confirmation au</value>
+  </data>
+  <data name="Service_CancelMoveIn" xml:space="preserve">
+    <value>Annuler l'emménagement</value>
+  </data>
+  <data name="Service_CancelMoveOut" xml:space="preserve">
+    <value>Annuler le déménagement</value>
+  </data>
+  <data name="Service_ChangementGerance" xml:space="preserve">
+    <value>Changement de gérance</value>
+  </data>
+  <data name="Service_DateMoveIn" xml:space="preserve">
+    <value>Date de l'émménagement</value>
+  </data>
+  <data name="Service_ModifyMoveIn" xml:space="preserve">
+    <value>Modifier l'emménagement</value>
+  </data>
+  <data name="Service_ModifyMoveOut" xml:space="preserve">
+    <value>Modifier le déménagement</value>
+  </data>
+  <data name="Service_MoveIn" xml:space="preserve">
+    <value>Emménagement</value>
+  </data>
+  <data name="Service_MoveOut" xml:space="preserve">
+    <value>Déménagement</value>
+  </data>
+  <data name="Simplehistory" xml:space="preserve">
+    <value>Historique simplifiée</value>
+  </data>
+  <data name="TextLibre" xml:space="preserve">
+    <value>Texte libre</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Titre</value>
+  </data>
+  <data name="UserSettings" xml:space="preserve">
+    <value>Paramètres utilisateur</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Oui</value>
+  </data>
+  <data name="administerOwner" xml:space="preserve">
+    <value>Gérer le propriétaire</value>
+  </data>
+  <data name="billing" xml:space="preserve">
+    <value>Facturation</value>
+  </data>
+  <data name="continue" xml:space="preserve">
+    <value>Continuer</value>
+  </data>
+  <data name="natel" xml:space="preserve">
+    <value>Téléphone</value>
+  </data>
+  <data name="newPartner" xml:space="preserve">
+    <value>Nouveau partenaire</value>
+  </data>
+  <data name="no" xml:space="preserve">
+    <value>non</value>
+  </data>
+  <data name="numCompteCompteur" xml:space="preserve">
+    <value>No de CC</value>
+  </data>
+  <data name="numFact" xml:space="preserve">
+    <value>Numéro de facture</value>
+  </data>
+  <data name="numLc" xml:space="preserve">
+    <value> LC</value>
+  </data>
+  <data name="save" xml:space="preserve">
+    <value>Enregistrer</value>
+  </data>
+  <data name="search" xml:space="preserve">
+    <value> Recherche</value>
+  </data>
+  <data name="search2" xml:space="preserve">
+    <value>Chercher</value>
+  </data>
+  <data name="standard" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="startInter" xml:space="preserve">
+    <value>Démarrer l'interaction</value>
+  </data>
+</root>

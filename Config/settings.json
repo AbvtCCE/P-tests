@@ -1,0 +1,13 @@
+{
+  "Environment": "QA",
+  "Browser": {
+    "Type": "Chrome",
+    "Headless": false,
+    "SlowMo": 0
+  },
+  "Timeouts": {
+    "Quick": 500,
+    "Normal": 3500,
+    "Long": 10000
+  }
+}

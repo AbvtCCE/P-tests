@@ -1,0 +1,358 @@
+
+name: Portail test fonctionnel - Multi-navigateurs et devices
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environnement cible'
+        required: true
+        default: 'qual'
+        type: choice
+        options:
+          - qual
+
+      # ── Bills ──────────────────────────────────────────────
+      test_PlanDePaiement:
+        description: '[Bills] Plan de paiement'
+        required: false
+        type: boolean
+        default: false
+      test_TelechargementFacture:
+        description: '[Bills] Téléchargement facture'
+        required: false
+        type: boolean
+        default: false
+
+      # ── User ───────────────────────────────────────────────
+      test_SignUpByCode:
+        description: '[User] Inscription par code'
+        required: false
+        type: boolean
+        default: false
+      test_SignUpByLastBill:
+        description: '[User] Inscription par dernière facture'
+        required: false
+        type: boolean
+        default: false
+      test_PasswordReset:
+        description: '[User] Réinitialisation mot de passe'
+        required: false
+        type: boolean
+        default: false
+      test_ChangeDetailsPartenaire:
+        description: '[User] Modification détails partenaire'
+        required: false
+        type: boolean
+        default: false
+      test_GetDetailsPartenaire:
+        description: '[User] Consultation détails partenaire'
+        required: false
+        type: boolean
+        default: false
+      test_ProductChange:
+        description: '[User] Changement de produit'
+        required: false
+        type: boolean
+        default: false
+
+      # ── Moving ─────────────────────────────────────────────
+      test_MoveIn:
+        description: '[Moving] Emménagement'
+        required: false
+        type: boolean
+        default: false
+
+      # ── Tariffs ────────────────────────────────────────────
+      test_ConsultationTariffs:
+        description: '[Tariffs] Consultation tarifs'
+        required: false
+        type: boolean
+        default: false
+
+      # ── Data ───────────────────────────────────────────────
+      test_AdminTool:
+        description: '[Data] Admin Tool'
+        required: false
+        type: boolean
+        default: false
+
+      # ── TNR (Non-Régression) ───────────────────────────────
+      test_ChangeNumTel:
+        description: '[TNR] Changement num tel partenaire et produit'
+        required: false
+        type: boolean
+        default: false
+      test_VoirConsommation:
+        description: '[TNR] Voir consommation portail et CRM'
+        required: false
+        type: boolean
+        default: false
+
+      # ── UI ─────────────────────────────────────────────────
+      test_PortP1:
+        description: '[UI] Activation Port P1'
+        required: false
+        type: boolean
+        default: false
+      test_PopUpFactureEmail:
+        description: '[UI] Pop-up facture par email'
+        required: false
+        type: boolean
+        default: false
+      test_Contact:
+        description: '[UI] Formulaire de contact'
+        required: false
+        type: boolean
+        default: false
+
+      # ── Interfaces ─────────────────────────────────────────
+      test_InterfacePaiementDirect:
+        description: '[Interfaces] Paiement direct'
+        required: false
+        type: boolean
+        default: false
+      test_InterfacePaiementEcheances:
+        description: '[Interfaces] Paiement échéances'
+        required: false
+        type: boolean
+        default: false
+      test_InterfaceRepousserDate:
+        description: '[Interfaces] Repousser date paiement'
+        required: false
+        type: boolean
+        default: false
+
+      # ── Navigateurs / Devices ──────────────────────────────
+      run_browser_chrome:
+        description: 'Chrome'
+        required: true
+        type: boolean
+        default: true
+      run_browser_firefox:
+        description: 'Firefox'
+        required: true
+        type: boolean
+        default: false
+      run_browser_safari:
+        description: 'Safari'
+        required: true
+        type: boolean
+        default: false
+      run_mobile:
+        description: 'mobile'
+        required: true
+        type: boolean
+        default: false
+
+      # ── Langue ─────────────────────────────────────────────
+      language:
+        description: 'Langues de test'
+        required: true
+        type: choice
+        default: 'FR+DE'
+        options:
+          - FR+DE
+          - FR
+          - DE
+
+
+env:
+  PATH_TO_CSPROJ: TestPlayrights.csproj
+  REPORTS_PATH: REPORTS
+  DOTNET_VERSION: '8.0.x'
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      WORKFLOW_NAME: "Fonc_${{ inputs.environment }}"
+      TEST_ENVIRONMENT: ${{ inputs.environment }}
+      RUN_BROWSER_CHROME: ${{ inputs.run_browser_chrome }}
+      RUN_BROWSER_FIREFOX: ${{ inputs.run_browser_firefox }}
+      RUN_BROWSER_SAFARI: ${{ inputs.run_browser_safari }}
+      RUN_MOBILE: ${{ inputs.run_mobile }}
+      LNG_FR: ${{ inputs.language == 'FR+DE' || inputs.language == 'FR' }}
+      LNG_DE: ${{ inputs.language == 'FR+DE' || inputs.language == 'DE' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # Cache NuGet packages
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      # Cache Playwright browsers (tous les navigateurs)
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-all-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-all-
+
+      - name: Clear Playwright env overrides
+        run: |
+          echo "PLAYWRIGHT_BROWSERS_PATH=" >> $GITHUB_ENV
+          echo "PWDEBUG=" >> $GITHUB_ENV
+
+      - name: Restore
+        run: dotnet restore "$PATH_TO_CSPROJ"
+
+      - name: Build
+        run: dotnet build "$PATH_TO_CSPROJ" -c Release --no-restore -clp:ErrorsOnly
+
+      - name: Install all Playwright browsers
+        shell: pwsh
+        run: |
+          $rel = "./bin/Release/net8.0/playwright.ps1"
+          $dbg = "./bin/Debug/net8.0/playwright.ps1"
+          if (Test-Path $rel) { $script = $rel }
+          elseif (Test-Path $dbg) { $script = $dbg }
+          else {
+            Write-Host "playwright.ps1 introuvable. Listing des sorties :"
+            Get-ChildItem -Path ./bin -Recurse -Filter "playwright.*" | Format-List FullName
+            throw "Script playwright.ps1 non trouvé en Release ni Debug."
+          }
+          # Installe TOUS les navigateurs (chromium, firefox, webkit)
+          & $script install --with-deps
+
+      - name: Build test filter
+        id: build_filter
+        run: |
+          # Construction du filtre basé sur les tests individuels sélectionnés
+          # Chaque test est identifié par le nom de sa classe C#
+          FILTER=""
+
+          # ── Bills ──
+          if [ "${{ inputs.test_PlanDePaiement }}" == "true" ]; then
+            FILTER="${FILTER}|FullyQualifiedName~Portail_Fonctionnel.PlanDePaiement"
+          fi
+          if [ "${{ inputs.test_TelechargementFacture }}" == "true" ]; then
+            FILTER="${FILTER}|FullyQualifiedName~Portail_Fonctionnel.TelechargementFactures"
+          fi
+
+          # ── User ──
+          if [ "${{ inputs.test_SignUpByCode }}" == "true" ]; then
+            FILTER="${FILTER}|FullyQualifiedName~Portail_Fonctionnel.InscriptionParCode"
+          fi
+          if [ "${{ inputs.test_SignUpByLastBill }}" == "true" ]; then
+            FILTER="${FILTER}|FullyQualifiedName~Portail_Fonctionnel.InscriptionParFacture"
+          fi
+          if [ "${{ inputs.test_PasswordReset }}" == "true" ]; then
+            FILTER="${FILTER}|FullyQualifiedName~Portail_Fonctionnel.ResetMotDePasse"
+          fi
+          if [ "${{ inputs.test_ChangeDetailsPartenaire }}" == "true" ]; then
+            FILTER="${FILTER}|FullyQualifiedName~Portail_Fonctionnel.ChangerDetailsPartenaire"
+          fi
+          if [ "${{ inputs.test_GetDetailsPartenaire }}" == "true" ]; then
+            FILTER="${FILTER}|FullyQualifiedName~Portail_Fonctionnel.VoirHistoriqueFacture"
+          fi
+          if [ "${{ inputs.test_ProductChange }}" == "true" ]; then
+            FILTER="${FILTER}|FullyQualifiedName~Portail_Fonctionnel.ChangementProduit"
+          fi
+
+          # ── Moving ──
+          if [ "${{ inputs.test_MoveIn }}" == "true" ]; then
+            FILTER="${FILTER}|FullyQualifiedName~Portail_Fonctionnel.Emmenagement"
+          fi
+
+          # ── Tariffs ──
+          if [ "${{ inputs.test_ConsultationTariffs }}" == "true" ]; then
+            FILTER="${FILTER}|FullyQualifiedName~Portail_Fonctionnel.TarifEstimation"
+          fi
+
+          # ── Data ──
+          if [ "${{ inputs.test_AdminTool }}" == "true" ]; then
+            FILTER="${FILTER}|FullyQualifiedName~Portail_Fonctionnel.AdminTool"
+          fi
+
+          # ── TNR ──
+          if [ "${{ inputs.test_ChangeNumTel }}" == "true" ]; then
+            FILTER="${FILTER}|FullyQualifiedName~Portail_TNR.ChangerDonneesEtProduit"
+          fi
+          if [ "${{ inputs.test_VoirConsommation }}" == "true" ]; then
+            FILTER="${FILTER}|FullyQualifiedName~Portail_TNR.ConsulterConsommation"
+          fi
+
+          # ── UI ──
+          if [ "${{ inputs.test_PortP1 }}" == "true" ]; then
+            FILTER="${FILTER}|FullyQualifiedName~Portail_Fonctionnel.ActivatePortP1"
+          fi
+          if [ "${{ inputs.test_PopUpFactureEmail }}" == "true" ]; then
+            FILTER="${FILTER}|FullyQualifiedName~Portail_Fonctionnel.BillsByEmail"
+          fi
+          if [ "${{ inputs.test_Contact }}" == "true" ]; then
+            FILTER="${FILTER}|FullyQualifiedName~Portail_Fonctionnel.ContactForm"
+          fi
+
+          # ── Interfaces ──
+          if [ "${{ inputs.test_InterfacePaiementDirect }}" == "true" ]; then
+            FILTER="${FILTER}|FullyQualifiedName~Portail_Fonctionnel.PaiementDirect"
+          fi
+          if [ "${{ inputs.test_InterfacePaiementEcheances }}" == "true" ]; then
+            FILTER="${FILTER}|FullyQualifiedName~Portail_Fonctionnel.PaiementEcheances"
+          fi
+          if [ "${{ inputs.test_InterfaceRepousserDate }}" == "true" ]; then
+            FILTER="${FILTER}|FullyQualifiedName~Portail_Fonctionnel.PaiementDeadLine"
+          fi
+
+          # Si aucun test sélectionné → lancer tous les tests fonctionnels portail
+          if [ -z "$FILTER" ]; then
+            echo "Aucun test sélectionné, lancement de tous les tests fonctionnels portail"
+            echo "FILTER=FullyQualifiedName~Portail_Fonctionnel" >> $GITHUB_OUTPUT
+          else
+            # Supprimer le premier "|"
+            FILTER="${FILTER:1}"
+            echo "FILTER=$FILTER" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run tests (all browsers & devices)
+        run: |
+          FILTER="${{ steps.build_filter.outputs.FILTER }}"
+          echo "Filtre de test utilisé: $FILTER"
+          dotnet test "$PATH_TO_CSPROJ" -c Release --no-build \
+            --filter "$FILTER" \
+            --logger "trx;LogFileName=test-results.trx" \
+            --logger "console;verbosity=detailed" \
+            --results-directory TestResults \
+            -- RunConfiguration.TreatNoTestsAsError=true
+
+      - name: List generated reports (diagnostic)
+        if: always()
+        run: |
+          echo "=== PDF files ==="
+          find ./bin -type f -name "*.pdf" -print | head -50
+          echo "=== REPORTS structure ==="
+          [ -d "./bin/Release/net8.0/REPORTS" ] && ls -laR ./bin/Release/net8.0/REPORTS/ || echo "no REPORTS folder"
+
+      - name: Upload PDF reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdf-reports-${{ inputs.environment }}
+          path: |
+            bin/Release/net8.0/REPORTS/**/*.pdf
+            bin/Release/net8.0/REPORTS/**/*.html
+          retention-days: 14
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults/*.trx
+          retention-days: 7

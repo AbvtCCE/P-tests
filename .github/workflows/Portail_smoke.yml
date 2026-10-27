@@ -1,0 +1,168 @@
+
+name: Smoke test portail - Multi-navigateurs et devices
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environnement cible'
+        required: true
+        default: 'qual'
+        type: choice
+        options:
+          - qual
+
+      test_filter:
+        description: 'Filtre de tests (vide = tous)'
+        required: false
+        default: ''
+        type: string
+
+      run_browser_chrome:
+        description: 'Chrome'
+        required: true
+        type: boolean
+        default: true
+      run_browser_firefox:
+        description: 'Firefox'
+        required: true
+        type: boolean
+        default: false
+      run_browser_safari:
+        description: 'Safari'
+        required: true
+        type: boolean
+        default: false
+      run_mobile:
+        description: 'mobile'
+        required: true
+        type: boolean
+        default: false
+      lng_fr:
+        description: 'FR'
+        required: true
+        type: boolean
+        default: true
+      lng_de:
+        description: 'DE'
+        required: true
+        type: boolean
+        default: true
+
+  schedule:
+    # 00:00 UTC = 02:00 CH (heure d'ete) / 01:00 CH (heure d'hiver), du lundi au vendredi
+    - cron: '0 0 * * 1-5'
+
+
+env:
+  PATH_TO_CSPROJ: TestPlayrights.csproj
+  REPORTS_PATH: REPORTS
+  DOTNET_VERSION: '8.0.x'
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      # Defaults pour les runs schedules (inputs.* est vide sur cron) :
+      # qual / chromium uniquement / desktop / FR + DE
+      WORKFLOW_NAME: "Smoke_${{ inputs.environment || 'qual' }}"
+      TEST_ENVIRONMENT: ${{ inputs.environment || 'qual' }}
+      RUN_BROWSER_CHROME: ${{ inputs.run_browser_chrome || 'true' }}
+      RUN_BROWSER_FIREFOX: ${{ inputs.run_browser_firefox || 'false' }}
+      RUN_BROWSER_SAFARI: ${{ inputs.run_browser_safari || 'false' }}
+      RUN_MOBILE: ${{ inputs.run_mobile || 'false' }}
+      LNG_FR: ${{ inputs.lng_fr || 'true' }}
+      LNG_DE: ${{ inputs.lng_de || 'true' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      # Cache NuGet packages
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      # Cache Playwright browsers (tous les navigateurs)
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-all-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-all-
+
+      - name: Clear Playwright env overrides
+        run: |
+          echo "PLAYWRIGHT_BROWSERS_PATH=" >> $GITHUB_ENV
+          echo "PWDEBUG=" >> $GITHUB_ENV
+
+      - name: Restore
+        run: dotnet restore "$PATH_TO_CSPROJ"
+
+      - name: Build
+        run: dotnet build "$PATH_TO_CSPROJ" -c Release --no-restore -clp:ErrorsOnly
+
+      - name: Install all Playwright browsers
+        shell: pwsh
+        run: |
+          $rel = "./bin/Release/net8.0/playwright.ps1"
+          $dbg = "./bin/Debug/net8.0/playwright.ps1"
+          if (Test-Path $rel) { $script = $rel }
+          elseif (Test-Path $dbg) { $script = $dbg }
+          else {
+            Write-Host "playwright.ps1 introuvable. Listing des sorties :"
+            Get-ChildItem -Path ./bin -Recurse -Filter "playwright.*" | Format-List FullName
+            throw "Script playwright.ps1 non trouvé en Release ni Debug."
+          }
+          # Installe TOUS les navigateurs (chromium, firefox, webkit)
+          & $script install --with-deps
+
+      - name: Run tests (all browsers & devices)
+        run: |
+          FILTER="TestCategory=CI_SMOKE"
+          if [ -n "${{ inputs.test_filter }}" ]; then
+            FILTER="$FILTER&${{ inputs.test_filter }}"
+          fi
+          dotnet test "$PATH_TO_CSPROJ" -c Release --no-build \
+            --filter "$FILTER" \
+            --logger "trx;LogFileName=test-results.trx" \
+            --logger "console;verbosity=detailed" \
+            --results-directory TestResults
+
+      - name: List generated reports (diagnostic)
+        if: always()
+        run: |
+          echo "=== PDF files ==="
+          find ./bin -type f -name "*.pdf" -print | head -50
+          echo "=== REPORTS structure ==="
+          [ -d "./bin/Release/net8.0/REPORTS" ] && ls -laR ./bin/Release/net8.0/REPORTS/ || echo "no REPORTS folder"
+
+      - name: Upload PDF reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdf-reports-${{ inputs.environment || 'qual' }}
+          path: |
+            bin/Release/net8.0/REPORTS/**/*.pdf
+            bin/Release/net8.0/REPORTS/**/*.html
+          retention-days: 14
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults/*.trx
+          retention-days: 7

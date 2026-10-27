@@ -1,0 +1,6 @@
+Environment;Url;IsActive
+Portail Qual;https://my-q.groupe-e.ch/;
+Portail Dev;https://uvcerz0009.sys.cce24x7.net:8443/realms/my-groupe-e/protocol/openid-connect/auth?response_type=code&client_id=portal&state=QlZ-RlJxelB1akxPN34wTXBVREJQZE1qSUNsT0ozQUwzR1JCUXpJR3ZUN2xw%3B%252Foverview&redirect_uri=https%3A%2F%2Fuvcerz0010.sys.cce24x7.net%3A8443%2F&scope=openid email portal&code_challenge=8fAv_yx0GdH-4hWSwBgPu5sftf1T-dIgjLsItWcDU4s&code_challenge_method=S256&nonce=QlZ-RlJxelB1akxPN34wTXBVREJQZE1qSUNsT0ozQUwzR1JCUXpJR3ZUN2xw&ui_locales=fr;false
+IVY Qual;https://ivy-qua.cce24x7.net/ivy/pro/CCE/PortalTemplate/1549F58C18A6C562/DefaultApplicationHomePage.ivp;true
+IVY Dev;https://dev-phoenix-cce24x7-net.westeurope.cloudapp.azure.com/ivy/;false
+

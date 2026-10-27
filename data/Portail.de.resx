@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="6Months" xml:space="preserve">
+    <value>6 Raten</value>
+  </data>
+  <data name="AccessCode" xml:space="preserve">
+    <value>Zugangscode</value>
+  </data>
+  <data name="ActiverP1" xml:space="preserve">
+    <value>Ich aktiviere den Port P1 meines Smart Meters</value>
+  </data>
+  <data name="AnnonceDem" xml:space="preserve">
+    <value>Ich möchte meinen Umzug melden</value>
+  </data>
+  <data name="BackToConnexionPage" xml:space="preserve">
+    <value>Zurück zum Login</value>
+  </data>
+  <data name="BackToResume" xml:space="preserve">
+    <value>Zurück zur Übersicht</value>
+  </data>
+  <data name="Bill" xml:space="preserve">
+    <value>echnung</value>
+  </data>
+  <data name="Bills" xml:space="preserve">
+    <value>Rechnungen</value>
+  </data>
+  <data name="BillsNumber" xml:space="preserve">
+    <value>Rechnungs-Nr</value>
+  </data>
+  <data name="CC" xml:space="preserve">
+    <value>Vertragskonto</value>
+  </data>
+  <data name="ChangeProduct" xml:space="preserve">
+    <value>Ich möchte mein Produkt</value>
+  </data>
+  <data name="ClientNumber" xml:space="preserve">
+    <value>Kundennummer</value>
+  </data>
+  <data name="ConsoDataByP" xml:space="preserve">
+    <value>Verbrauchsdaten nach Abrechnungszeitraum</value>
+  </data>
+  <data name="ContractAccount" xml:space="preserve">
+    <value>Vertragskonto</value>
+  </data>
+  <data name="Corespondance" xml:space="preserve">
+    <value>Korrespondenz Ä</value>
+  </data>
+  <data name="DEM" xml:space="preserve">
+    <value>umzung</value>
+  </data>
+  <data name="DateRemiseKey" xml:space="preserve">
+    <value>Datum der Schlüsselübergabe</value>
+  </data>
+  <data name="ElecBill" xml:space="preserve">
+    <value>StromRechnung</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Exportieren</value>
+  </data>
+  <data name="ExportMesureData" xml:space="preserve">
+    <value>Messwerte exportieren</value>
+  </data>
+  <data name="ExportReleve" xml:space="preserve">
+    <value>Ablesedaten exportieren</value>
+  </data>
+  <data name="IDKTPL" xml:space="preserve">
+    <value>Ich kenne den Vormieter nicht</value>
+  </data>
+  <data name="IRACN" xml:space="preserve">
+    <value>Ich habe eine Gutschrift</value>
+  </data>
+  <data name="IWAMB" xml:space="preserve">
+    <value>Ich möchte eine Monatsrechnung erhalten</value>
+  </data>
+  <data name="IWLANC" xml:space="preserve">
+    <value>Ich möchte die Rü</value>
+  </data>
+  <data name="IWTEC" xml:space="preserve">
+    <value>Ich möchte die Kosten für</value>
+  </data>
+  <data name="IWTKT" xml:space="preserve">
+    <value>Ich möchte die Kosten pro kWh</value>
+  </data>
+  <data name="IWTOMF" xml:space="preserve">
+    <value>Ich möchte meine Rechnung in mehreren Raten bezahlen</value>
+  </data>
+  <data name="IWTRACOTB" xml:space="preserve">
+    <value>Ich möchte eine Kopie meiner</value>
+  </data>
+  <data name="IWTRMC" xml:space="preserve">
+    <value>Ich möchte meine Stromkosten</value>
+  </data>
+  <data name="IWTRTP" xml:space="preserve">
+    <value>Ich möchte die Zahlung meiner</value>
+  </data>
+  <data name="IWTTT" xml:space="preserve">
+    <value>Ich möchte mein Produkt</value>
+  </data>
+  <data name="InscriLoge" xml:space="preserve">
+    <value>Weiteres Objekt melden</value>
+  </data>
+  <data name="InscritLoge" xml:space="preserve">
+    <value>Weiteres Objekt melden</value>
+  </data>
+  <data name="LastBillAmount" xml:space="preserve">
+    <value>Letzter Rechungsbetrag</value>
+  </data>
+  <data name="LastMonth" xml:space="preserve">
+    <value>Letzter Monat</value>
+  </data>
+  <data name="Month" xml:space="preserve">
+    <value>Monat</value>
+  </data>
+  <data name="MultiplePaiement" xml:space="preserve">
+    <value>In Raten bezahlen</value>
+  </data>
+  <data name="MyAccount" xml:space="preserve">
+    <value>Meine Daten</value>
+  </data>
+  <data name="MyData" xml:space="preserve">
+    <value>Meine Daten</value>
+  </data>
+  <data name="NPA" xml:space="preserve">
+    <value>PLZ</value>
+  </data>
+  <data name="NotInGreZoneMsg" xml:space="preserve">
+    <value>Die angegebene Adresse befindet sich nicht im Versorgungsgebiet der Groupe E oder kann nicht gefunden werden. Bitte melden Sie sich beim Anbieter, der für diesen Ort zuständig ist.</value>
+  </data>
+  <data name="OpenBill" xml:space="preserve">
+    <value>Offen</value>
+  </data>
+  <data name="PaiementCancelledByUser" xml:space="preserve">
+    <value>Ihre Zahlungsanfrage wurde zurückgezogen</value>
+  </data>
+  <data name="PayLater" xml:space="preserve">
+    <value>Zahlungsfrist verlängern</value>
+  </data>
+  <data name="PayNow" xml:space="preserve">
+    <value>Jetzt bezahlen</value>
+  </data>
+  <data name="ProductAndContract" xml:space="preserve">
+    <value>Produkte &amp; Verträge</value>
+  </data>
+  <data name="RDVC" xml:space="preserve">
+    <value>Ablesung Ihres Zählers</value>
+  </data>
+  <data name="REDECO" xml:space="preserve">
+    <value>Ich möchte meinen Umzug melden</value>
+  </data>
+  <data name="Releve" xml:space="preserve">
+    <value>Ablesung</value>
+  </data>
+  <data name="SubscribeNow" xml:space="preserve">
+    <value>Jetzt registrieren</value>
+  </data>
+  <data name="TEB" xml:space="preserve">
+    <value>Thema Stromrechnung</value>
+  </data>
+  <data name="TotalAmount" xml:space="preserve">
+    <value>Gesamtbetrag</value>
+  </data>
+  <data name="TotalConso" xml:space="preserve">
+    <value>Gesamtverbrauch</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Willkommen</value>
+  </data>
+  <data name="WhatYouWToDo" xml:space="preserve">
+    <value>Was möchten Sie tun?</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>Jahr</value>
+  </data>
+  <data name="activate" xml:space="preserve">
+    <value>Aktivieren</value>
+  </data>
+  <data name="activatePort" xml:space="preserve">
+    <value>Port P1 aktivieren</value>
+  </data>
+  <data name="annonceDemenagement" xml:space="preserve">
+    <value>Umzug melden</value>
+  </data>
+  <data name="cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="close" xml:space="preserve">
+    <value>Schliessen</value>
+  </data>
+  <data name="contact" xml:space="preserve">
+    <value>Kontakt</value>
+  </data>
+  <data name="cpt" xml:space="preserve">
+    <value>Zähler</value>
+  </data>
+  <data name="cvivilite" xml:space="preserve">
+    <value>Anrede</value>
+  </data>
+  <data name="dataReleve" xml:space="preserve">
+    <value>Hinweise zu den Ablesungen</value>
+  </data>
+  <data name="deco" xml:space="preserve">
+    <value>Abmelden</value>
+  </data>
+  <data name="descObj" xml:space="preserve">
+    <value>Objektbeschreibung Stockwerk</value>
+  </data>
+  <data name="factureElec" xml:space="preserve">
+    <value>Stromrechnung</value>
+  </data>
+  <data name="label_emailInfo" xml:space="preserve">
+    <value>Die Stromrechnung wird Ihnen als PDF an Ihre angegebene Kontakt-E-Mail-Adresse geschickt. Sie können die Rechnungen zudem jederzeit in My Groupe E einsehen.</value>
+  </data>
+  <data name="lastname" xml:space="preserve">
+    <value>Nachname</value>
+  </data>
+  <data name="lc" xml:space="preserve">
+    <value>Verbrauchsstelle</value>
+  </data>
+  <data name="lieu" xml:space="preserve">
+    <value>Ort</value>
+  </data>
+  <data name="miss" xml:space="preserve">
+    <value>Frau</value>
+  </data>
+  <data name="mobilePhone" xml:space="preserve">
+    <value>Mobilnummer</value>
+  </data>
+  <data name="mr" xml:space="preserve">
+    <value>Herr</value>
+  </data>
+  <data name="name" xml:space="preserve">
+    <value>Vorname</value>
+  </data>
+  <data name="next" xml:space="preserve">
+    <value>Weiter</value>
+  </data>
+  <data name="number" xml:space="preserve">
+    <value>Nummer</value>
+  </data>
+  <data name="panelTitle_emailInfo" xml:space="preserve">
+    <value>Informationen zur E-Mail-Rechnung</value>
+  </data>
+  <data name="passwordForgotten" xml:space="preserve">
+    <value>Passwort vergessen?</value>
+  </data>
+  <data name="pdfPush_msg" xml:space="preserve">
+    <value>Sie erhalten derzeit Ihre Stromrechnung per Post. Mit einer E-Mail-Rechnungen schonen wir die Umwelt. Wollen Sie jetzt wechseln? *</value>
+  </data>
+  <data name="radio_emailInfo" xml:space="preserve">
+    <value>Die E-Mail-Adresse wird als Kontakt-E-Mail-Adresse gespeichert. Sie können diese jederzeit under Meine Daten anpassen.</value>
+  </data>
+  <data name="radio_noEmail" xml:space="preserve">
+    <value>Nein, ich möchte meine Stromrechnung weiterhin per Post erhalten.</value>
+  </data>
+  <data name="radio_yesEmail" xml:space="preserve">
+    <value>Ja, ich möchte meine Stromrechnung zukünftig per E-Mail erhalten (empfohlen)</value>
+  </data>
+  <data name="readAndAccept" xml:space="preserve">
+    <value>Ich habe die allgemeinen Geschäftsbedingungen der Groupe E gelesen und akzeptiert.</value>
+  </data>
+  <data name="rmrqConcer" xml:space="preserve">
+    <value>Hinweise zur</value>
+  </data>
+  <data name="rue" xml:space="preserve">
+    <value>Strasse</value>
+  </data>
+  <data name="save" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="send" xml:space="preserve">
+    <value>Absenden</value>
+  </data>
+  <data name="tarif" xml:space="preserve">
+    <value>Tarife</value>
+  </data>
+  <data name="textbox_email" xml:space="preserve">
+    <value>Korrespondenz E-Mail</value>
+  </data>
+  <data name="theme" xml:space="preserve">
+    <value>Thema</value>
+  </data>
+  <data name="title_elecFact" xml:space="preserve">
+    <value>Ihre Stromrechnung per E-Mail</value>
+  </data>
+</root>
