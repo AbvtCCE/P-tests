@@ -183,6 +183,7 @@ namespace TestPlayrights
         /// label "Npart" du champ Numero de partenaire est traduit correctement.
         /// </summary>
         [Test]
+        [Category("CI_SMOKE_IVY_AUTONOMOUS")]
         public async Task ChangementDeLangue()
         {
             

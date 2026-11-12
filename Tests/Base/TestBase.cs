@@ -43,7 +43,13 @@ namespace TestPlayrights
         /// <summary>
         /// Tous les partenaires chargés depuis le CSV
         /// </summary>
-        protected List<Partenaire> tousLesPartenaires = DataLoader.GetPartenaires(Serializer.PathToPartenaireCsv);
+        private List<Partenaire>? _tousLesPartenaires;
+
+        protected List<Partenaire> tousLesPartenaires
+        {
+            get => _tousLesPartenaires ??= DataLoader.GetPartenaires(Serializer.PathToPartenaireCsv);
+            set => _tousLesPartenaires = value;
+        }
 
         /// <summary>
         /// Le partenaire sélectionné pour le test en cours

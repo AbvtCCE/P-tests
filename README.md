@@ -193,6 +193,11 @@ son secret selon la politique de l'organisation. Ne jamais le mettre dans le cod
 par Git, une commande de test ou un rapport. Le workflow IVY est manuel : il n'exécute pas de
 connexion SSO planifiée sans supervision.
 
+Le workflow **Smoke IVY - Qual** exécute uniquement le test autonome
+`ChangementDeLangue` : il valide la connexion SSO et la rotation FR/DE/EN sans dépendre des données
+partenaires privées. Les tests qui recherchent un partenaire nécessitent le fichier local ignoré
+`data/Partenaires.csv` et ne sont donc pas inclus dans ce smoke CI.
+
 Après le SSO, les tests sélectionnent le tenant **Groupe-E**, démarrent l'interaction, puis ferment
 les interactions laissées ouvertes. L'outil explicite
 `Tests/Ivy/Tools/NettoyerInteractionsOuvertesIvy.cs` est disponible dans la liste des tests pour

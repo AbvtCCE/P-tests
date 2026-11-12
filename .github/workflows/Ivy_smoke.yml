@@ -53,6 +53,6 @@ jobs:
             exit 1
           fi
           dotnet test "$PATH_TO_CSPROJ" -c Release --no-build \
-            --filter "TestCategory=CI_SMOKE_IVY" \
+            --filter "TestCategory=CI_SMOKE_IVY_AUTONOMOUS" \
             --logger "console;verbosity=detailed" \
             --results-directory TestResults
