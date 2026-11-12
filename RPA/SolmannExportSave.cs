@@ -63,6 +63,7 @@ namespace TestPlayrights
         [TearDown]
         public async Task TearDown()
         {
+            await TestEvidence.CaptureAsync(page);
             if (context != null) await context.CloseAsync();
             if (browser != null) await browser.CloseAsync();
             playwright?.Dispose();

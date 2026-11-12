@@ -130,39 +130,12 @@ jobs:
           & $script install --with-deps
 
       - name: Run tests (all browsers & devices)
+        shell: pwsh
+        env:
+          TEST_FILTER: ${{ inputs.test_filter }}
         run: |
-          FILTER="TestCategory=CI_SMOKE"
-          if [ -n "${{ inputs.test_filter }}" ]; then
-            FILTER="$FILTER&${{ inputs.test_filter }}"
-          fi
-          dotnet test "$PATH_TO_CSPROJ" -c Release --no-build \
-            --filter "$FILTER" \
-            --logger "trx;LogFileName=test-results.trx" \
-            --logger "console;verbosity=detailed" \
-            --results-directory TestResults
-
-      - name: List generated reports (diagnostic)
-        if: always()
-        run: |
-          echo "=== PDF files ==="
-          find ./bin -type f -name "*.pdf" -print | head -50
-          echo "=== REPORTS structure ==="
-          [ -d "./bin/Release/net8.0/REPORTS" ] && ls -laR ./bin/Release/net8.0/REPORTS/ || echo "no REPORTS folder"
-
-      - name: Upload PDF reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: pdf-reports-${{ inputs.environment || 'qual' }}
-          path: |
-            bin/Release/net8.0/REPORTS/**/*.pdf
-            bin/Release/net8.0/REPORTS/**/*.html
-          retention-days: 14
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: TestResults/*.trx
-          retention-days: 7
+          $filter = "TestCategory=CI_SMOKE"
+          if (-not [string]::IsNullOrWhiteSpace($env:TEST_FILTER)) {
+            $filter += "&$env:TEST_FILTER"
+          }
+          & ./scripts/Run-TestsWithReport.ps1 -Configuration Release -NoBuild -Filter $filter

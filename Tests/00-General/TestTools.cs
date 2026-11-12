@@ -108,6 +108,8 @@ namespace TestPlayrights
                 await page.WaitForSelectorAsync("input[name='username']", new() { Timeout = 5000 });
 
                 await page.FillAsync("input[name='username']", email);
+                
+                await page.GetByRole(AriaRole.Button, new() { Name = "Suivant" }).ClickAsync();
                 await page.FillAsync("input[name='password']", password);
 
                 if (report != null && testName != null)
@@ -330,7 +332,7 @@ namespace TestPlayrights
         /// </summary>
         public static async Task GoToDashboardIvy(IPage page, string langue, ReportBuilder report, string testName, Partenaire partenaire)
         {
-            await LoginQual(page, Serializer.EmailIvy, Serializer.MdpIvy, true, langue);
+            await LoginIvyQual(page, langue);
             await report.AddTestStep("Connexion", page, testName);
             await IvySearch(page, partenaire.NumeroPartenaire, langue);
             await report.AddTestStep("Partenaire selectionne", page, testName);
@@ -339,32 +341,27 @@ namespace TestPlayrights
         /// <summary>
         /// Login IVY via SSO (Windows/Entra), choix de langue et gestion des activités en cours
         /// </summary>
-        public static async Task LoginQual(IPage page, string username, string password, bool standardOrReception, string langue)
+        public static async Task<int> LoginIvyQual(IPage page, string langue)
         {
             try
             {
-                await page.GotoAsync(Serializer.GetUrlIvyQual());
-                PageLoginWindows loginPage = new PageLoginWindows(page);
-                
-                await loginPage.SignInAsync(username, password);
+                await IvyAuthentication.SignInAsync(page);
 
                 PageOuvertureIvy ouverturePage = new PageOuvertureIvy(page);
                 await ouverturePage.ChooseLanguageAsync(langue);
-
-                // Gestion du bouton Resume (activité précédente non terminée)
-                await ResumeAndQuitOldActivity(page, langue);
-
                 await ouverturePage.ConfigureFinalAsync(langue);
+                var interactionsFermees = await FermerToutesLesInteractionsOuvertes(page, langue);
                 await FermerPagesSupplementaires(page);
+                return interactionsFermees;
             }
             catch (PlaywrightException ex) when (ex.Message.Contains("Execution context was destroyed"))
             {
-                Console.WriteLine($"Contexte detruit pendant LoginQual: {ex.Message}");
+                Console.WriteLine($"Contexte detruit pendant LoginIvyQual: {ex.Message}");
                 throw;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur dans LoginQual: {ex.Message}");
+                Console.WriteLine($"Erreur dans LoginIvyQual: {ex.Message}");
                 throw;
             }
         }
@@ -597,67 +594,103 @@ namespace TestPlayrights
         #region IVY - Gestion des activités et popups
 
         /// <summary>
-        /// Gère le bouton Resume et ferme les activités précédentes non terminées
+        /// Reprend et termine toutes les interactions ouvertes, jusqu'à la limite de sécurité.
         /// </summary>
-        private static async Task ResumeAndQuitOldActivity(IPage page, string langue)
+        public static async Task<int> FermerToutesLesInteractionsOuvertes(
+            IPage page,
+            string langue,
+            int maximumInteractions = 50)
         {
+            if (maximumInteractions <= 0)
+                throw new ArgumentOutOfRangeException(nameof(maximumInteractions));
+
+            var interactionsFermees = 0;
+            while (interactionsFermees < maximumInteractions)
+            {
+                if (!await ResumeAndQuitOldActivity(page, langue))
+                    return interactionsFermees;
+
+                interactionsFermees++;
+            }
+
+            var boutonResume = page.GetByRole(
+                AriaRole.Button,
+                new() { Name = ResourceHelper.GetStringIvy("Resume", langue) });
+            if (await boutonResume.IsVisibleAsync())
+            {
+                throw new InvalidOperationException(
+                    $"Une interaction reste ouverte après la fermeture de {maximumInteractions} interactions.");
+            }
+
+            return interactionsFermees;
+        }
+
+        private static async Task<bool> ResumeAndQuitOldActivity(IPage page, string langue)
+        {
+            var boutonResume = page.GetByRole(
+                AriaRole.Button,
+                new() { Name = ResourceHelper.GetStringIvy("Resume", langue) });
+
             try
             {
-                var boutonResume = page.GetByRole(AriaRole.Button, new() { Name = ResourceHelper.GetStringIvy("Resume", langue) });
-
-                // Vérifier si le bouton Resume existe
-                bool resumeExiste = false;
-                try
+                await boutonResume.WaitForAsync(new()
                 {
-                    await boutonResume.WaitForAsync(new LocatorWaitForOptions { Timeout = 2000 });
-                    resumeExiste = true;
-                }
-                catch (TimeoutException)
-                {
-                    resumeExiste = false;
-                }
+                    State = WaitForSelectorState.Visible,
+                    Timeout = 5000
+                });
+            }
+            catch (TimeoutException)
+            {
+                return false;
+            }
 
-                if (!resumeExiste) return;
-
-                // Reprendre et fermer l'ancienne activité
+            var repriseCliquee = true;
+            try
+            {
                 await boutonResume.ClickAsync();
 
-                await page.GetByRole(AriaRole.Button, new() { Name = ResourceHelper.GetStringIvy("FinishInteraction", langue) }).Last.WaitForAsync();
+                await page.GetByRole(
+                    AriaRole.Button,
+                    new() { Name = ResourceHelper.GetStringIvy("FinishInteraction", langue) })
+                    .Last.WaitForAsync();
                 await FermerPagesSupplementaires(page);
 
-                var boutonTerminer = await page.GetByRole(AriaRole.Button, new() { Name = ResourceHelper.GetStringIvy("End", langue) }).AllAsync();
+                var boutonTerminer = await page.GetByRole(
+                    AriaRole.Button,
+                    new() { Name = ResourceHelper.GetStringIvy("End", langue) }).AllAsync();
                 if (boutonTerminer.Count > 0)
                 {
-                    await page.GetByRole(AriaRole.Button, new() { Name = ResourceHelper.GetStringIvy("End", langue) }).Last.ClickAsync();
+                    await page.GetByRole(
+                        AriaRole.Button,
+                        new() { Name = ResourceHelper.GetStringIvy("End", langue) })
+                        .Last.ClickAsync();
                 }
 
-                // Apres le click End, IVY peut afficher un warning dialog PrimeFaces :
-                //   - "Voulez-vous terminer l'interaction ?"
-                //   - "Aucun service execute, terminer quand meme ?"
-                // L'overlay ui-dialog-mask intercepte les clics tant qu'on ne confirme pas.
-                // On detecte la presence d'un dialog ouvert via cette overlay puis on clique
-                // sur le bouton "Oui/Yes/Ja" du dialog visible.
                 bool dialogConfirme = false;
                 var overlayMask = page.Locator(".ui-widget-overlay.ui-dialog-mask").First;
                 try
                 {
                     await overlayMask.WaitForAsync(new() { Timeout = 5000, State = WaitForSelectorState.Visible });
 
-                    // Cliquer le "Oui" du dialog visible (PrimeFaces: .ui-dialog:visible)
                     var ouiButton = page.Locator(".ui-dialog:visible")
                         .GetByRole(AriaRole.Button, new() { Name = ResourceHelper.GetStringIvy("Yes", langue) })
                         .First;
                     await ouiButton.ClickAsync();
                     dialogConfirme = true;
 
-                    // Attendre la disparition de l'overlay avant d'enchainer
                     await overlayMask.WaitForAsync(new() { Timeout = 5000, State = WaitForSelectorState.Hidden });
                 }
-                catch (TimeoutException) { /* Pas de warning dialog, on enchainera */ }
+                catch (TimeoutException)
+                {
+                    dialogConfirme = false;
+                }
 
                 if (!dialogConfirme)
                 {
-                    await page.GetByRole(AriaRole.Button, new() { Name = ResourceHelper.GetStringIvy("FinishInteraction", langue) }).Last.ClickAsync();
+                    await page.GetByRole(
+                        AriaRole.Button,
+                        new() { Name = ResourceHelper.GetStringIvy("FinishInteraction", langue) })
+                        .Last.ClickAsync();
                 }
                 await FermerPagesSupplementaires(page);
 
@@ -665,10 +698,12 @@ namespace TestPlayrights
                 await FermerPagesSupplementaires(page);
 
                 await ValiderBoutonsSafely(page, langue);
+                return true;
             }
             catch (PlaywrightException ex) when (ex.Message.Contains("Execution context was destroyed"))
             {
                 Console.WriteLine("Contexte detruit pendant ResumeAndQuitOldActivity");
+                return repriseCliquee;
             }
         }
 

@@ -246,6 +246,9 @@
   <data name="OpenBill" xml:space="preserve">
     <value>Offen</value>
   </data>
+  <data name="PaidBillStatus" xml:space="preserve">
+    <value>Bezahlt</value>
+  </data>
   <data name="PaiementCancelledByUser" xml:space="preserve">
     <value>Ihre Zahlungsanfrage wurde zurückgezogen</value>
   </data>

@@ -1,0 +1,58 @@
+name: Smoke IVY - Qual
+
+on:
+  workflow_dispatch:
+
+env:
+  PATH_TO_CSPROJ: TestPlayrights.csproj
+  REPORTS_PATH: REPORTS
+  DOTNET_VERSION: '8.0.x'
+
+jobs:
+  ivy-smoke:
+    runs-on: ubuntu-latest
+    environment: qual
+    env:
+      WORKFLOW_NAME: "IVY_Smoke_Qual"
+      TEST_ENVIRONMENT: qual
+      LNG_FR: 'true'
+      LNG_DE: 'true'
+      LNG_EN: 'false'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore "$PATH_TO_CSPROJ"
+
+      - name: Build
+        run: dotnet build "$PATH_TO_CSPROJ" -c Release --no-restore -clp:ErrorsOnly
+
+      - name: Install Playwright Chromium
+        shell: pwsh
+        run: |
+          $script = "./bin/Release/net8.0/playwright.ps1"
+          if (-not (Test-Path $script)) {
+            throw "Script Playwright introuvable : $script"
+          }
+          & $script install chromium --with-deps
+
+      - name: Run IVY smoke tests
+        env:
+          IVY_EMAIL: ${{ secrets.IVY_EMAIL }}
+          IVY_PASSWORD: ${{ secrets.IVY_PASSWORD }}
+        run: |
+          if [ -z "$IVY_EMAIL" ] || [ -z "$IVY_PASSWORD" ]; then
+            echo "::error::Configure IVY_EMAIL et IVY_PASSWORD dans les secrets GitHub Actions."
+            exit 1
+          fi
+          dotnet test "$PATH_TO_CSPROJ" -c Release --no-build \
+            --filter "TestCategory=CI_SMOKE_IVY" \
+            --logger "console;verbosity=detailed" \
+            --results-directory TestResults

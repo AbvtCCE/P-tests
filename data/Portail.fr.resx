@@ -246,6 +246,9 @@
   <data name="OpenBill" xml:space="preserve">
     <value>En suspens</value>
   </data>
+  <data name="PaidBillStatus" xml:space="preserve">
+    <value>Payé</value>
+  </data>
   <data name="PaiementCancelledByUser" xml:space="preserve">
     <value>Le paiement a été annulé par l'utilisateur</value>
   </data>

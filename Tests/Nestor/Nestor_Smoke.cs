@@ -9,6 +9,7 @@ namespace TestPlayrights
     /// </summary>
     [TestFixture]
     [Category("CI_SMOKE_NESTOR")]
+    [Explicit("Test Nestor interactif et incomplet; réservé à l'inspection manuelle.")]
     public class Nestor_Smoke : TestBaseNestor
     {
         #region Configuration

@@ -1,0 +1,901 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Tableau de bord des tests automatisés Groupe E : couverture, état de validation et prochaines étapes.">
+  <title>Tests automatisés — Tableau de bord</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #162d3d;
+      --muted: #587081;
+      --line: #d7e3e9;
+      --paper: #ffffff;
+      --ground: #edf3f6;
+      --green: #07805b;
+      --green-dark: #056245;
+      --green-pale: #e5f4ed;
+      --blue: #17637b;
+      --amber: #99620a;
+      --amber-pale: #fff3d8;
+      --red: #a13535;
+      --red-pale: #fff0ef;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--ground);
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+    button, input { font: inherit; }
+
+    .shell {
+      height: 100vh;
+      height: 100dvh;
+      max-width: 1540px;
+      margin: 0 auto;
+      padding: clamp(12px, 2.2vh, 24px) clamp(16px, 2.8vw, 42px) 12px;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
+      gap: clamp(10px, 1.6vh, 18px);
+    }
+
+    .masthead {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .eyebrow {
+      margin: 0 0 4px;
+      color: var(--green-dark);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    h1 { margin: 0; font-size: clamp(23px, 2.3vw, 32px); line-height: 1.05; }
+    .subtitle { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+
+    .quality-tag {
+      flex: 0 0 auto;
+      padding: 8px 12px;
+      border: 1px solid #b8dbce;
+      border-radius: 999px;
+      background: var(--green-pale);
+      color: var(--green-dark);
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .tab {
+      min-height: 40px;
+      padding: 9px 16px;
+      border: 0;
+      border-bottom: 3px solid transparent;
+      border-radius: 7px 7px 0 0;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .tab[aria-selected="true"] {
+      border-bottom-color: var(--green);
+      background: #e7f2ef;
+      color: var(--green-dark);
+    }
+
+    .tab:focus-visible, button:focus-visible, input:focus-visible {
+      outline: 3px solid #70b6db;
+      outline-offset: 2px;
+    }
+
+    .panel {
+      min-height: 0;
+      padding: clamp(12px, 1.8vh, 20px);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--paper);
+      box-shadow: 0 8px 24px #1734470c;
+    }
+
+    .panel[hidden] { display: none; }
+
+    .overview {
+      height: 100%;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      gap: 12px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    h2 { margin: 0; font-size: 18px; }
+    .section-heading p, .subtle { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+
+    .summary-pills { display: flex; flex-wrap: wrap; gap: 6px; justify-content: end; }
+    .pill {
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #f0f5f7;
+      color: #355161;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .test-grid, .manual-grid {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .test-card, .manual-card {
+      min-height: 0;
+      padding: clamp(10px, 1.5vh, 16px);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fcfefe;
+    }
+
+    .test-card { display: grid; grid-template-columns: 35px minmax(0, 1fr); gap: 10px; }
+    .number {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      background: var(--green-pale);
+      color: var(--green-dark);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    h3 { margin: 0; font-size: 14px; line-height: 1.25; }
+    .test-card p { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.4; }
+    .result { margin-top: 8px !important; color: var(--ink) !important; }
+    .status {
+      display: inline-block;
+      margin-top: 7px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: var(--green-pale);
+      color: var(--green-dark);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .status.caution {
+      background: var(--amber-pale);
+      color: var(--amber);
+    }
+
+    .site-note {
+      padding: 9px 11px;
+      border-left: 3px solid #e6a842;
+      border-radius: 6px;
+      background: var(--amber-pale);
+      color: #644609;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .manual-view {
+      height: 100%;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 10px;
+    }
+
+    .manual-top {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .manual-top h2 { font-size: 17px; }
+    .manual-top .subtle { max-width: 690px; line-height: 1.4; }
+
+    .metrics { display: flex; gap: 7px; }
+    .metric {
+      min-width: 92px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #f7fafb;
+      text-align: center;
+    }
+
+    .metric strong { display: block; color: var(--green-dark); font-size: 17px; line-height: 1.1; }
+    .metric span { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+
+    .manual-card { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 6px; }
+    .manual-card-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .auto-time { color: var(--blue); font-size: 11px; font-weight: 800; white-space: nowrap; }
+
+    ol { margin: 0; padding-left: 19px; color: #405b6a; font-size: 11px; line-height: 1.38; }
+    li { padding-left: 2px; margin: 2px 0; }
+
+    .timer-row { display: flex; align-items: center; gap: 7px; }
+    .timer {
+      min-width: 58px;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .timer.running { color: var(--green-dark); }
+    .clock-button {
+      min-height: 28px;
+      padding: 5px 9px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 750;
+    }
+
+    .clock-button.start { border-color: var(--green); background: var(--green); color: #fff; }
+    .clock-button.stop { border-color: #d68a84; color: var(--red); }
+    .manual-result {
+      width: 69px;
+      margin-left: auto;
+      padding: 5px 6px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      text-align: right;
+      font-size: 11px;
+    }
+
+    .manual-result-label { color: var(--muted); font-size: 9px; white-space: nowrap; }
+    .gain { color: var(--green-dark); }
+    .gain.negative { color: var(--red); }
+
+    .todo-view {
+      height: 100%;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 9px;
+    }
+
+    .todo-intro {
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .todo-board {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .todo-lane {
+      min-width: 0;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #f9fbfc;
+    }
+
+    .todo-lane h3 { margin-bottom: 7px; }
+    .todo-lane ul { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+    .todo-lane li {
+      padding: 6px 7px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: white;
+      color: #405b6a;
+      font-size: 10px;
+      line-height: 1.3;
+    }
+
+    .todo-lane li strong { color: var(--ink); }
+    .todo-verdict { display: block; margin-top: 3px; color: var(--green-dark); font-weight: 750; }
+    .todo-verdict.caution { color: var(--amber); }
+    .todo-verdict.avoid { color: var(--red); }
+
+    .inventory-view {
+      height: 100%;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      gap: 10px;
+    }
+
+    .inventory-grid {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .inventory-card {
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #f9fbfc;
+    }
+
+    .inventory-card h3 { margin-bottom: 7px; }
+    .inventory-card ul { margin: 0; padding-left: 17px; color: #405b6a; font-size: 11px; line-height: 1.4; }
+    .inventory-card li { margin: 3px 0; }
+    .inventory-card p { margin: 5px 0 0; color: #405b6a; font-size: 11px; line-height: 1.4; }
+    .inventory-note {
+      padding: 9px 11px;
+      border-left: 3px solid var(--blue);
+      border-radius: 6px;
+      background: #edf5f8;
+      color: #294d5c;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .page-foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .page-foot a { color: var(--green-dark); font-weight: 700; text-decoration: none; }
+    .page-foot a:hover { text-decoration: underline; }
+
+    @media (max-width: 850px) {
+      .shell { padding: 10px; gap: 8px; }
+      .quality-tag { display: none; }
+      .manual-top { grid-template-columns: 1fr; }
+      .metrics { justify-content: start; }
+      .panel { padding: 10px; }
+      .test-card, .manual-card { padding: 8px; }
+      ol { font-size: 10px; line-height: 1.28; }
+    }
+
+    @media (max-height: 650px) {
+      .shell { gap: 7px; padding-top: 8px; padding-bottom: 7px; }
+      .subtitle, .section-heading p, .site-note { font-size: 10px; }
+      .panel { padding: 9px; }
+      .test-grid, .manual-grid { gap: 7px; }
+      .test-card, .manual-card { padding: 7px; }
+      .manual-card { gap: 4px; }
+      ol { font-size: 9px; line-height: 1.22; }
+      .manual-top .subtle { font-size: 10px; }
+    }
+
+    @media (max-width: 620px) {
+      html, body { overflow: auto; }
+      .shell { min-height: 100vh; height: auto; grid-template-rows: auto auto 1fr auto; }
+      .test-grid, .manual-grid { grid-template-columns: 1fr; grid-template-rows: none; }
+      .todo-board { grid-template-columns: 1fr; }
+      .inventory-grid { grid-template-columns: 1fr; }
+      .todo-lane { min-height: 120px; }
+      .test-card { min-height: 120px; }
+      .manual-card { min-height: 145px; }
+      .panel { overflow: visible; }
+      .overview, .manual-view, .todo-view, .inventory-view { height: auto; }
+      .metrics { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <div>
+        <p class="eyebrow">Référence du projet · tests automatisés</p>
+        <h1>Tableau de bord des tests</h1>
+        <p class="subtitle">Couverture Portail, IVY et Nestor, état des validations et mesure du gain de temps.</p>
+      </div>
+      <span class="quality-tag">QUAL · Chromium · lecture seule</span>
+    </header>
+
+    <nav class="tabs" role="tablist" aria-label="Sections de la documentation">
+      <button class="tab" id="tab-tests" role="tab" aria-selected="true" aria-controls="panel-tests" tabindex="0">Tests automatisés</button>
+      <button class="tab" id="tab-manual" role="tab" aria-selected="false" aria-controls="panel-manual" tabindex="-1">Manuel &amp; calcul du gain</button>
+      <button class="tab" id="tab-inventory" role="tab" aria-selected="false" aria-controls="panel-inventory" tabindex="-1">Inventaire &amp; validation</button>
+      <button class="tab" id="tab-todo" role="tab" aria-selected="false" aria-controls="panel-todo" tabindex="-1">À faire</button>
+    </nav>
+
+    <section class="panel" id="panel-tests" role="tabpanel" aria-labelledby="tab-tests">
+      <div class="overview">
+        <div class="section-heading">
+          <div>
+            <h2>Parcours couverts</h2>
+            <p>Les smoke connectés utilisent des comptes inscrits adaptés et ne modifient aucune donnée.</p>
+          </div>
+          <div class="summary-pills" aria-label="Résumé">
+            <span class="pill">4 tests connectés</span>
+            <span class="pill">6 pages publiques FR/DE</span>
+            <span class="pill">Catégorie CI_SMOKE</span>
+          </div>
+        </div>
+
+        <div class="test-grid">
+          <article class="test-card">
+            <span class="number">01</span>
+            <div>
+              <h3>Mon compte · informations client</h3>
+              <p>Connexion, ouverture de « Mon compte » puis « Mes données client ». Le test ouvre les coordonnées en lecture seule et vérifie que des valeurs sont visibles.</p>
+              <span class="status">VALIDÉ · run du 10.11.2026</span>
+            </div>
+          </article>
+
+          <article class="test-card">
+            <span class="number">02</span>
+            <div>
+              <h3>Produits &amp; contrats · dépliage</h3>
+              <p>Vérifie que les contrats apparaissent et qu’un contrat actif déplié présente son détail; les contrats inactifs ne sont pas un prérequis.</p>
+              <span class="status">VALIDÉ APRÈS CORRECTION · ciblé 1/1</span>
+            </div>
+          </article>
+
+          <article class="test-card">
+            <span class="number">03</span>
+            <div>
+              <h3>Consommation · absence d’erreur</h3>
+              <p>Ouvre la page et recherche des alertes ou messages d’erreur. Les données de consommation ne sont pas un prérequis : leur absence en QUAL ne fait pas échouer le smoke.</p>
+              <span class="status">VALIDÉ · run du 10.11.2026</span>
+            </div>
+          </article>
+
+          <article class="test-card">
+            <span class="number">04</span>
+            <div>
+              <h3>Factures · comptes de contrat</h3>
+              <p>Compte inscrit sélectionné selon le CSV avec facture ouverte. Vérifie que le compte de contrat est visible; ne télécharge, n’ouvre ni ne paie de facture.</p>
+              <span class="status">VALIDÉ · run du 10.11.2026</span>
+            </div>
+          </article>
+        </div>
+
+        <aside class="site-note">
+          <strong>État des preuves :</strong> la catégorie CI_SMOKE du 10.11.2026 couvre 11 cas de connexion, navigation et performance : 11 réussis. La smoke CI est séparée des suites externes et legacy; les outils interactifs et squelettes non implémentés sont marqués NUnit Explicit pour éviter leur exécution générale accidentelle. Les audits d’accessibilité sont laissés de côté. La synchronisation CSV reste hors CI_SMOKE et son écriture est désactivée par défaut.
+          <strong>Factures téléchargeables :</strong> le scan complet corrigé a parcouru 71 comptes : 8 avec factures PDF actives, 56 sans facture téléchargeable et 7 en erreur (4 consentements e-mail, 3 délais d’attente). Quarante-deux lignes auraient changé; aperçu seulement, le CSV n’a pas été modifié. Une vérification ciblée a aussi téléchargé deux PDF et confirmé qu’ils ne sont pas vides (2/2 réussis). Résoudre les 7 erreurs avant toute écriture générale.
+          <a href="../bin/Debug/net8.0/REPORTS/20261110/Telechargement%20des%20factures/261110184902_Telechargement%20des%20factures_FR_Chrome.html/index.html">Voir le rapport du test et ses preuves</a>
+        </aside>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-inventory" role="tabpanel" aria-labelledby="tab-inventory" hidden>
+      <div class="inventory-view">
+        <div class="section-heading">
+          <div>
+            <h2>Inventaire des suites</h2>
+            <p>Les nombres désignent les fichiers de tests C# par site, pas le nombre de cas NUnit.</p>
+          </div>
+          <div class="summary-pills" aria-label="État des validations">
+            <span class="pill">Build · 10.11.2026 · réussi</span>
+            <span class="pill">Smoke Portail · 11/11 réussis</span>
+            <span class="pill">Suite complète · non validée</span>
+          </div>
+        </div>
+
+        <div class="inventory-grid">
+          <article class="inventory-card">
+            <h3>Portail · 11 fichiers</h3>
+            <ul>
+              <li>4 smoke fonctionnels (historique et Copilot)</li>
+              <li>1 fichier de scénarios fonctionnels</li>
+              <li>1 fichier de non-régression avec cas TODO</li>
+              <li>3 tests techniques : accessibilité, performance, administration</li>
+              <li>2 synchronisations de données, hors smoke CI</li>
+            </ul>
+          </article>
+
+          <article class="inventory-card">
+            <h3>IVY · 3 fichiers</h3>
+            <ul>
+              <li>1 smoke</li>
+              <li>1 fichier de scénarios fonctionnels</li>
+              <li>1 fichier de non-régression avec scénarios TODO</li>
+              <li>Langues par défaut : FR/DE; EN sur demande</li>
+              <li>Catégories techniques préparées, sans test actuellement</li>
+            </ul>
+          </article>
+
+          <article class="inventory-card">
+            <h3>Nestor · 1 fichier</h3>
+            <ul>
+              <li>1 smoke historique</li>
+              <li>À revalider séparément</li>
+            </ul>
+            <h3 style="margin-top: 12px">Portail V2 Copilot</h3>
+            <p>Les tests sont classés avec le reste du Portail par catégorie; le dossier V2 conserve sa documentation, sans dupliquer les fichiers de tests.</p>
+          </article>
+
+          <article class="inventory-card">
+            <h3>Structure reconstruite</h3>
+            <ul>
+              <li>Socle partagé : modèles, données, configuration, localisation, rapports</li>
+              <li>Séparation par site : Portail / IVY</li>
+              <li>Page Objects classés par domaine</li>
+              <li>Tests classés par catégorie; Sync séparé pour le Portail</li>
+              <li>Dossiers préparés pour les futurs tests autonomes : Portail FR/DE, IVY FR/DE/EN</li>
+            </ul>
+          </article>
+
+          <article class="inventory-card">
+            <h3>Validations disponibles</h3>
+            <ul>
+              <li>Smoke CI · 10.11.2026 : 11 cas de connexion, navigation et performance, tous réussis; cela ne valide pas toute la suite du projet.</li>
+              <li><a href="../REPORTS/Executions/20261110-095655715/index.html">Rapport de la catégorie CI_SMOKE · 11/11</a> : connexion FR/DE, navigation connectée et contrôles non-fonctionnels.</li>
+              <li><a href="../REPORTS/Executions/20261110-104614147/index.html">Exécution legacy en Qualité · 10.11.2026</a> : FR / Chrome desktop, 19 cas exécutés, 2 réussis et 17 échoués; le rapport inclut les captures et liens vers les résultats NUnit.</li>
+              <li>Le changement de coordonnées Portail a réussi et a modifié le téléphone du compte de test. Diagnostic IVY FR : la connexion interactive avec l’adresse corrigée a atteint le tableau IVY et montré le bandeau d'interaction ouverte avec le bouton « Résumé » (<a href="../bin/Debug/net8.0/TestResults/Evidence/SmokeIvy_FR_bandeau_interaction.png">capture masquée</a>). Le compte local utilisé par le smoke automatisé est refusé par Microsoft (mot de passe invalide); les identifiants restent à mettre à jour dans la configuration locale ou les secrets GitHub. Le login commun sélectionne maintenant Groupe-E, démarre l'interaction puis ferme les reprises en boucle; le <a href="../Tests/Ivy/Tools/NettoyerInteractionsOuvertesIvy.cs">nettoyage explicite</a> est accessible depuis la liste des tests.</li>
+              <li>Un squelette <code>Ivy_TNR.EmmenagementPuisModification</code> a été inclus par erreur par un filtre de nom trop large; il a échoué avant ses étapes TODO et n’a pas modifié de données métier.</li>
+              <li>Exclusions catégorisées : <code>PORTAIL_PUBLIC_EXTERNAL</code> (site public), <code>PORTAIL_LEGACY_SMOKE</code> (ancien smoke) et <code>PORTAIL_ACCESSIBILITY</code> (laissé de côté pour l’instant).</li>
+              <li>Squelettes TNR, tests interactifs et ancienne synchronisation CSV marqués NUnit <code>Explicit</code>; ils ne partent plus par accident avec un lancement global.</li>
+              <li>Les rapports sont générés dans REPORTS/ (ignoré par Git) et restent locaux; ne pas publier les captures connectées.</li>
+            </ul>
+          </article>
+
+          <article class="inventory-card">
+            <h3>Triage legacy réalisé</h3>
+            <ul>
+              <li>Les scénarios actifs Portail et IVY ont été examinés par effet observable : lecture, mutation, effet externe ou travail inachevé.</li>
+              <li>Les mutations à risque sont maintenant NUnit <code>Explicit</code>; aucun scénario n’a été supprimé.</li>
+              <li>Les catégories décrivent le risque; elles ne signifient pas que le scénario est validé ou fiable.</li>
+            </ul>
+          </article>
+
+          <article class="inventory-card">
+            <h3>Triage · Portail</h3>
+            <ul>
+              <li><strong>Lecture :</strong> <code>TelechargementFactures</code>; il télécharge des PDF localement. <code>VoirHistoriqueFacture</code> est aussi en lecture, mais reste <code>Explicit</code> car ses assertions sont signalées instables.</li>
+              <li><strong>Mutations isolées :</strong> <code>PlanDePaiement</code>, <code>ChangerDetailsPartenaire</code> et <code>ResetMotDePasse</code> (effet e-mail) sont <code>Explicit</code>. Le squelette <code>Demenagement</code> est commenté et inactif.</li>
+              <li><strong>Outils :</strong> <code>AnonymizeUsers</code> modifie les noms de comptes et est <code>Explicit</code>. <code>Portail_SyncInscription</code> réécrit le CSV progressivement et reste <code>Explicit</code>; préférer la sync V2 protégée par aperçu.</li>
+              <li>Inscription par code/facture et emménagement sont aussi commentés donc inactifs; l’ancien smoke et les squelettes TNR restent isolés. Rien n’est supprimé.</li>
+            </ul>
+          </article>
+
+          <article class="inventory-card">
+            <h3>Triage · IVY</h3>
+            <ul>
+              <li><strong>Lecture :</strong> <code>HistoriquePartenaire</code> consulte l’historique; pas de modification métier observée.</li>
+              <li><strong>Mutations <code>Explicit</code> :</strong> <code>ChangementDonneesBancaires</code>, <code>GestionDestinataireFacture</code>, les scénarios d’emménagement, <code>ChangerDetailsPartenaire</code>, <code>ChangerTarif</code>, <code>ChangementNumeroTel</code>, <code>CreerPartenaire</code>, <code>SaisieReleveCompteur</code> et <code>ChangementGerance</code>. <code>ChangerTarif</code> est incomplet et n’a pas de vérification finale.</li>
+              <li><strong>Effet externe :</strong> <code>CopieFacture</code> envoie un e-mail et est <code>Explicit</code>. <code>ModifierEmmenagement</code> est aussi « à reprendre » : la mutation est suivie d’une pause et aucune vérification finale n’est faite.</li>
+              <li><code>Ivy_TNR</code> reste isolé : ses méthodes sont des squelettes <code>Assert.Warn</code>. Aucun scénario n’est supprimé.</li>
+            </ul>
+          </article>
+
+          <article class="inventory-card">
+            <h3>Triage · Nestor et utilitaires</h3>
+            <ul>
+              <li><strong>Ne pas exécuter tel quel :</strong> <code>Nestor_Smoke.cs</code> est interactif, utilise des identifiants IVY et des enregistrements codés en dur; remplacer ou retirer après confirmation.</li>
+              <li><strong>Usage manuel :</strong> l’utilitaire de construction de pages avec <code>PauseAsync</code> sert à l’inspection, pas à une suite autonome.</li>
+              <li>Les tests qui modifient des données métier restent hors exécution tant que comptes isolés et restauration des données ne sont pas définis.</li>
+            </ul>
+          </article>
+        </div>
+
+        <aside class="inventory-note">
+          <strong>Prochaines étapes du projet :</strong>
+          <ol>
+            <li><strong>Préparer les données de test isolées :</strong> remplacer les identifiants codés en dur avant de réparer ou réactiver les scénarios qui modifient des comptes.</li>
+            <li><strong>Remplir les dossiers autonomes par langue :</strong> créer des parcours utiles et indépendants, avec FR par défaut pour IVY, puis DE et EN séparément.</li>
+            <li><strong>Décider des suppressions avec le métier :</strong> les scénarios identifiés restent présents jusqu’à confirmation; les tests d’accessibilité restent de côté jusqu’à demande.</li>
+          </ol>
+          Le lot CI_SMOKE actuel est séparé et validé; il ne représente pas encore la validation complète du projet.
+        </aside>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-todo" role="tabpanel" aria-labelledby="tab-todo" hidden>
+      <div class="todo-view">
+        <p class="todo-intro">Les tests sont classés par risque et valeur. Les prochaines validations commenceront par les smoke V2 en lecture seule; toute mutation exige des données et comptes isolés.</p>
+        <div class="todo-board">
+          <section class="todo-lane">
+            <h3>1 · Facile — lecture seule</h3>
+            <ul>
+              <li><strong>Langue après connexion (FR/DE).</strong> Vérifier onglets et libellés après bascule.<span class="todo-verdict">À faire · utile, peu risqué</span></li>
+              <li><strong>Consommation et factures visibles.</strong> « Voir les consommations » et « Les factures s'affichent » sont déjà couverts par les smoke connectés.<span class="todo-verdict">Déjà couvert · éviter le doublon</span></li>
+              <li><strong>Vitesse + responsive mobile.</strong> Mesures après connexion (1 run) : compte 1,0 s; contrats 4,7 s; consommation 1,4 s; factures 0,6 s. Budget exploratoire : 20 s.<span class="todo-verdict">Ajouté · mesures indicatives, pas un SLA</span></li>
+              <li><strong>Accessibilité.</strong> Le tableau de bord Portail connecté est contrôlé en FR/DE par axe-core; le rapport joint les captures contextualisées des éléments signalés.<span class="todo-verdict">Ajouté · résultats à corriger côté application</span></li>
+            </ul>
+          </section>
+
+          <section class="todo-lane">
+            <h3>2 · Modéré — données en lecture</h3>
+            <ul>
+              <li><strong>Télécharger une facture PDF.</strong> Vérifier nom, type et taille du fichier, sans paiement.<span class="todo-verdict">Validé · 2 PDF téléchargés et non vides sur QUAL, FR / Chrome · 10.11.2026</span></li>
+              <li><strong>Décompte annuel / intermédiaire.</strong> Vérifier l'historique et le document associé.<span class="todo-verdict">À faire · dépend du profil et de la période</span></li>
+              <li><strong>Estimation des coûts.</strong> Couvrir quelques entrées représentatives et le résultat affiché.<span class="todo-verdict">Intéressant · calculs de référence nécessaires</span></li>
+              <li><strong>Voir un déménagement.</strong> Parcours sans modification si le compte a un dossier existant.<span class="todo-verdict">À faire si les données QUAL le permettent</span></li>
+            </ul>
+          </section>
+
+          <section class="todo-lane">
+            <h3>3 · Difficile — état à restaurer</h3>
+            <ul>
+              <li><strong>Créer / modifier / annuler un déménagement.</strong> Prévoir compte dédié et nettoyage fiable.<span class="todo-verdict caution">Utile · pas sur un compte partagé</span></li>
+              <li><strong>Modifier le partenaire ou le profil.</strong> Vérifier sauvegarde, puis restaurer les valeurs initiales.<span class="todo-verdict caution">À isoler · risque de pollution des données</span></li>
+              <li><strong>Inscription et mot de passe oublié.</strong> Nécessite boîte e-mail jetable et maîtrise des délais / limites.<span class="todo-verdict caution">À faire dans un environnement contrôlé</span></li>
+              <li><strong>Campagne, données de mesure, produits P1 / solaire.</strong> Parcours métier intéressants; états et effets externes à clarifier.<span class="todo-verdict caution">Après définition des données de test</span></li>
+            </ul>
+          </section>
+
+          <section class="todo-lane">
+            <h3>4 · Risqué — financier / privilégié</h3>
+            <ul>
+              <li><strong>IBAN, arrangement et délai de paiement, plan d'acomptes.</strong> Modifient des données financières; annulation seule insuffisante sans garantie de restauration.<span class="todo-verdict avoid">À éviter sur comptes QUAL partagés</span></li>
+              <li><strong>Relevé de compteur.</strong> Peut influencer la facturation; simuler uniquement avec données isolées et accord métier.<span class="todo-verdict avoid">Compte bac à sable dédié requis</span></li>
+              <li><strong>Outil admin.</strong> Vérifier rôles et autorisations dans une suite séparée, avec comptes à privilèges dédiés.<span class="todo-verdict avoid">Pas un smoke utilisateur portail</span></li>
+              <li><strong>Priorité recommandée.</strong> Commencer par langue FR/DE et téléchargement PDF; différer mutations jusqu'à la disponibilité de comptes jetables.<span class="todo-verdict">Valeur rapide sans risque métier</span></li>
+            </ul>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-manual" role="tabpanel" aria-labelledby="tab-manual" hidden>
+      <div class="manual-view">
+        <div class="manual-top">
+          <div>
+            <h2>Chronométrer les mêmes parcours manuellement</h2>
+            <p class="subtle">Pour une comparaison équitable, repartez de la page QUAL et reconnectez-vous pour chaque parcours. Démarrez avant d’ouvrir le portail; arrêtez dès le contrôle final. Ne saisissez aucun secret dans cette page. Mesure auto : 33,9 s au total pour 4 tests (moyenne 8,5 s), Chromium headless, 28.10.2026.</p>
+          </div>
+          <div class="metrics" aria-live="polite">
+            <div class="metric"><strong id="manual-average">—</strong><span>Moyenne manuelle</span></div>
+            <div class="metric"><strong id="auto-average">8,5 s</strong><span>Moyenne auto correspondante</span></div>
+            <div class="metric"><strong id="gain-average">—</strong><span>Temps gagné moyen</span></div>
+          </div>
+        </div>
+
+        <div class="manual-grid">
+          <article class="manual-card" data-test="account">
+            <div class="manual-card-header">
+              <h3>1 · Mon compte</h3>
+              <span class="auto-time">Auto : 7,0 s</span>
+            </div>
+            <ol>
+              <li>Ouvrir QUAL, choisir FR et se connecter avec un compte inscrit sans popup bloquant.</li>
+              <li>Ouvrir « Mon compte » → « Mes données client ».</li>
+              <li>Ouvrir les coordonnées et vérifier qu’au moins une valeur est affichée; ne rien modifier ni enregistrer.</li>
+            </ol>
+            <div class="timer-row">
+              <span class="timer" aria-label="Temps écoulé">00:00</span>
+              <button class="clock-button start" type="button">Démarrer</button>
+              <button class="clock-button stop" type="button" disabled>Arrêter</button>
+              <button class="clock-button reset" type="button">Effacer</button>
+              <span class="manual-result-label">Saisi (s)</span>
+              <input class="manual-result" type="number" min="0" step="0.1" inputmode="decimal" aria-label="Temps manuel en secondes pour Mon compte">
+            </div>
+          </article>
+
+          <article class="manual-card" data-test="contracts">
+            <div class="manual-card-header">
+              <h3>2 · Produits &amp; contrats</h3>
+              <span class="auto-time">Auto : 10,6 s</span>
+            </div>
+            <ol>
+              <li>Ouvrir QUAL en FR et se connecter avec un compte inscrit ayant contrat et compteur.</li>
+              <li>Ouvrir « Produits &amp; contrats »; vérifier qu’au moins un contrat s’affiche.</li>
+              <li>Déplier les contrats; vérifier que chaque panneau révèle un détail non vide.</li>
+            </ol>
+            <div class="timer-row">
+              <span class="timer" aria-label="Temps écoulé">00:00</span>
+              <button class="clock-button start" type="button">Démarrer</button>
+              <button class="clock-button stop" type="button" disabled>Arrêter</button>
+              <button class="clock-button reset" type="button">Effacer</button>
+              <span class="manual-result-label">Saisi (s)</span>
+              <input class="manual-result" type="number" min="0" step="0.1" inputmode="decimal" aria-label="Temps manuel en secondes pour Produits et contrats">
+            </div>
+          </article>
+
+          <article class="manual-card" data-test="energy">
+            <div class="manual-card-header">
+              <h3>3 · Consommation</h3>
+              <span class="auto-time">Auto : 9,2 s</span>
+            </div>
+            <ol>
+              <li>Ouvrir QUAL en FR et se connecter avec un compte inscrit ayant contrat et compteur.</li>
+              <li>Ouvrir la page « Consommation ».</li>
+              <li>Vérifier l’absence de bannière/alerte/texte d’erreur. Des données absentes sont acceptables en QUAL.</li>
+            </ol>
+            <div class="timer-row">
+              <span class="timer" aria-label="Temps écoulé">00:00</span>
+              <button class="clock-button start" type="button">Démarrer</button>
+              <button class="clock-button stop" type="button" disabled>Arrêter</button>
+              <button class="clock-button reset" type="button">Effacer</button>
+              <span class="manual-result-label">Saisi (s)</span>
+              <input class="manual-result" type="number" min="0" step="0.1" inputmode="decimal" aria-label="Temps manuel en secondes pour Consommation">
+            </div>
+          </article>
+
+          <article class="manual-card" data-test="bills">
+            <div class="manual-card-header">
+              <h3>4 · Factures</h3>
+              <span class="auto-time">Auto : 7,1 s</span>
+            </div>
+            <ol>
+              <li>Ouvrir QUAL en FR et se connecter avec un compte inscrit confirmé comme téléchargeable. Le dernier aperçu corrigé a trouvé 8 comptes, mais les indicateurs du CSV ne sont pas synchronisés : l’aperçu n’a rien écrit.</li>
+              <li>Ouvrir « Factures »; choisir le compte de contrat correspondant si plusieurs sont proposés.</li>
+              <li>Vérifier qu’au moins un compte de contrat est affiché. Ne pas télécharger ni payer.</li>
+            </ol>
+            <div class="timer-row">
+              <span class="timer" aria-label="Temps écoulé">00:00</span>
+              <button class="clock-button start" type="button">Démarrer</button>
+              <button class="clock-button stop" type="button" disabled>Arrêter</button>
+              <button class="clock-button reset" type="button">Effacer</button>
+              <span class="manual-result-label">Saisi (s)</span>
+              <input class="manual-result" type="number" min="0" step="0.1" inputmode="decimal" aria-label="Temps manuel en secondes pour Factures">
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <footer class="page-foot">
+      <span id="calculation-note">Temps gagné = manuel − auto; % gagné = temps gagné ÷ manuel. Comparaison limitée aux tests chronométrés.</span>
+      <span>Référence de mesure : 28.10.2026 · <a href="../Tests/Portail/V2Copilot/README.md">README Portail V2 Copilot</a></span>
+    </footer>
+  </main>
+
+  <script>
+    (() => {
+      const autoSeconds = { account: 7.0, contracts: 10.6, energy: 9.2, bills: 7.1 };
+      const storageKey = "portail-v2-manual-times-v1";
+      const tabs = [...document.querySelectorAll('[role="tab"]')];
+      const panels = [...document.querySelectorAll('[role="tabpanel"]')];
+      const cards = [...document.querySelectorAll(".manual-card")];
+      let activeTimer = null;
+      let timerInterval = null;
+      let savedTimes = {};
+
+      try {
+        savedTimes = JSON.parse(localStorage.getItem(storageKey) || "{}");
+      } catch {
+        savedTimes = {};
+      }
+
+      const formatClock = (milliseconds) => {
+        const totalTenths = Math.floor(milliseconds / 100);
+        const minutes = Math.floor(totalTenths / 600);
+        const seconds = Math.floor(totalTenths / 10) % 60;
+        const tenths = totalTenths % 10;
+        return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}.${tenths}`;
+      };
+
+      const updateGain = () => {
+        const timedTests = cards
+          .map(card => ({
+            key: card.dataset.test,
+            manual: Number(card.querySelector(".manual-result").value)
+          }))
+          .filter(test => Number.isFinite(test.manual) && test.manual > 0);
+        const measuredAutoTimes = timedTests.length
+          ? timedTests.map(test => autoSeconds[test.key])
+          : Object.values(autoSeconds);
+        const autoAverage = measuredAutoTimes.reduce((sum, value) => sum + value, 0) /
+          measuredAutoTimes.length;
+        document.querySelector("#auto-average").textContent =
+          `${autoAverage.toLocaleString("fr-CH", { maximumFractionDigits: 1 })} s`;
+
+        if (timedTests.length === 0) {
+          document.querySelector("#manual-average").textContent = "—";
+          document.querySelector("#gain-average").textContent = "—";
+          return;
+        }
+
+        const manualAverage = timedTests.reduce((sum, test) => sum + test.manual, 0) / timedTests.length;
+        const gainSeconds = manualAverage - autoAverage;
+        const gainPercent = manualAverage > 0 ? (gainSeconds / manualAverage) * 100 : 0;
+        document.querySelector("#manual-average").textContent =
+          `${manualAverage.toLocaleString("fr-CH", { maximumFractionDigits: 1 })} s`;
+        const gainElement = document.querySelector("#gain-average");
+        gainElement.textContent =
+          `${gainSeconds.toLocaleString("fr-CH", { maximumFractionDigits: 1 })} s · ${gainPercent.toLocaleString("fr-CH", { maximumFractionDigits: 0 })} %`;
+        gainElement.classList.toggle("negative", gainSeconds < 0);
+      };
+
+      const persistTimes = () => {
+        savedTimes = Object.fromEntries(cards
+          .map(card => [card.dataset.test, card.querySelector(".manual-result").value])
+          .filter(([, value]) => value !== ""));
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(savedTimes));
+        } catch {
+          // The live calculator remains usable when browser storage is unavailable.
+        }
+        updateGain();
+      };
+
+      const stopTimer = (card) => {
+        if (activeTimer !== card) return;
+        const elapsed = performance.now() - activeTimer.startedAt;
+        const input = card.querySelector(".manual-result");
+        input.value = (elapsed / 1000).toFixed(1);
+        card.querySelector(".timer").textContent = formatClock(elapsed);
+        card.querySelector(".timer").classList.remove("running");
+        card.querySelector(".start").disabled = false;
+        card.querySelector(".stop").disabled = true;
+        clearInterval(timerInterval);
+        timerInterval = null;
+        activeTimer = null;
+        persistTimes();
+      };
+
+      cards.forEach(card => {
+        const key = card.dataset.test;
+        const timer = card.querySelector(".timer");
+        const input = card.querySelector(".manual-result");
+        if (savedTimes[key] !== undefined) {
+          input.value = savedTimes[key];
+          const milliseconds = Number(savedTimes[key]) * 1000;
+          if (Number.isFinite(milliseconds)) timer.textContent = formatClock(milliseconds);
+        }
+
+        card.querySelector(".start").addEventListener("click", () => {
+          if (activeTimer) stopTimer(activeTimer);
+          activeTimer = card;
+          activeTimer.startedAt = performance.now();
+          timer.classList.add("running");
+          card.querySelector(".start").disabled = true;
+          card.querySelector(".stop").disabled = false;
+          timerInterval = setInterval(() => {
+            timer.textContent = formatClock(performance.now() - activeTimer.startedAt);
+          }, 100);
+        });
+
+        card.querySelector(".stop").addEventListener("click", () => stopTimer(card));
+        card.querySelector(".reset").addEventListener("click", () => {
+          if (activeTimer === card) stopTimer(card);
+          input.value = "";
+          timer.textContent = "00:00";
+          persistTimes();
+        });
+        input.addEventListener("input", persistTimes);
+      });
+
+      const activateTab = (selectedTab, focus = false) => {
+        tabs.forEach(tab => {
+          const selected = tab === selectedTab;
+          tab.setAttribute("aria-selected", String(selected));
+          tab.tabIndex = selected ? 0 : -1;
+          document.getElementById(tab.getAttribute("aria-controls")).hidden = !selected;
+        });
+        if (focus) selectedTab.focus();
+      };
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => activateTab(tab));
+        tab.addEventListener("keydown", event => {
+          if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+            event.preventDefault();
+            const offset = event.key === "ArrowRight" ? 1 : -1;
+            activateTab(tabs[(index + offset + tabs.length) % tabs.length], true);
+          }
+        });
+      });
+
+      updateGain();
+    })();
+  </script>
+</body>
+</html>

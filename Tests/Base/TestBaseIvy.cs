@@ -33,8 +33,7 @@ namespace TestPlayrights
         /// </summary>
         protected async Task LoginIvy()
         {
-            await TestTools.LoginQual(
-                page!, Serializer.EmailIvy, Serializer.MdpIvy, true, langue!);
+            await TestTools.LoginIvyQual(page!, langue!);
         }
 
         /// <summary>

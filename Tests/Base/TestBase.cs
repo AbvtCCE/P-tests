@@ -136,7 +136,7 @@ namespace TestPlayrights
         {
             var nomRapport = $"{DateTime.Now:yyMMddHHmmss}_{testName}_{langue}_{browserName}{(isMobile ? "_Mobile" : "")}";
             var cheminRapport = Path.Combine(
-                Serializer.pathToReportFolder,
+                Environment.GetEnvironmentVariable("REPORTS_PATH") ?? Serializer.pathToReportFolder,
                 testName ?? "Test",
                 $"{nomRapport}.html"
             );
@@ -158,6 +158,7 @@ namespace TestPlayrights
         public virtual async Task TearDown()
         {
             var resultatTest = TestContext.CurrentContext.Result.Outcome.Status;
+            await TestEvidence.CaptureAsync(page);
 
             // --- Capture d'écran en cas d'échec ---
             if (resultatTest == TestStatus.Failed && Report != null && page != null)

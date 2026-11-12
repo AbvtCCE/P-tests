@@ -15,6 +15,7 @@ namespace TestPlayrights
     /// </summary>
     [TestFixture]
     [Category("ConstructionsPages")]
+    [Explicit("Outil d'inspection interactif; réservé à la construction des Page Objects.")]
     public class ConstructionsPages : TestBase
     {
         [Test]
@@ -26,8 +27,7 @@ namespace TestPlayrights
             var p = DataLoader.FindClientWithCriteria(
                 tousLesPartenaires, new Dictionary<string, string?>())!;
 
-            await TestTools.LoginQual(
-                page!, Serializer.EmailIvy, Serializer.MdpIvy, true, langue!);
+            await TestTools.LoginIvyQual(page!, langue!);
             await TestTools.IvySearch(page!, p.NumeroPartenaire, langue!);
 
             // Verifications du header centralisees dans le Page Object
